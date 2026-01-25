@@ -6,7 +6,7 @@ metadata:
   labels:
     app: muffin-currency
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: muffin-currency
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: muffin-currency
-        image: aadan1lov/muffin-currency:1.0.0
+        image: userviktoriuss/muffin-currency:1.0.0
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -79,7 +79,7 @@ metadata:
   labels:
     app: muffin-wallet
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: muffin-wallet
@@ -106,7 +106,7 @@ spec:
             - name: log-volume
               mountPath: /usr/share/nginx/html
         - name: muffin-wallet
-          image: aadan1lov/muffin-wallet:1.1.0
+          image: userviktoriuss/muffin-wallet:1.3.1
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
@@ -160,7 +160,7 @@ data:
 
     spring:
       datasource:
-        url: jdbc:postgresql://localhost:5432/muffin_wallet
+        url: jdbc:postgresql://host.containers.internal:5432/muffin_wallet
         username: muffin-wallet
     logging.file.name: /logs/app.log
     currency:
@@ -170,12 +170,22 @@ data:
       endpoints:
         web:
           exposure:
-            include: health, info
+            include: health, info, prometheus
       endpoint:
         health:
           probes:
             enabled: true
           show-details: always
+      metrics:
+        enable:
+          http:
+            server:
+              requests: true
+        distribution:
+          percentiles-histogram:
+            http:
+              server:
+                requests: true
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

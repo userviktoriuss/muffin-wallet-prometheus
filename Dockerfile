@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:24-jdk-alpine
 VOLUME /tmp
 ARG JAR_FILE
 COPY muffin-wallet-server/build/libs/*.jar app.jar

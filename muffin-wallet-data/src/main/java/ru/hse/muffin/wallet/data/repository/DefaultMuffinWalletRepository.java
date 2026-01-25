@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.hse.muffin.wallet.data.api.MuffinWalletRepository;
 import ru.hse.muffin.wallet.data.api.dto.MuffinWallet;
 
@@ -47,6 +48,7 @@ public class DefaultMuffinWalletRepository implements MuffinWalletRepository {
   }
 
   @Override
+  @Transactional
   public Optional<MuffinWallet> findById(UUID id) {
     var foundedWallets =
         namedParameterJdbcTemplate.query(
@@ -54,6 +56,13 @@ public class DefaultMuffinWalletRepository implements MuffinWalletRepository {
 
     if (foundedWallets.isEmpty()) {
       return Optional.empty();
+    }
+
+    try {
+      Thread.sleep(30000);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
     }
 
     return Optional.of(foundedWallets.getFirst());
