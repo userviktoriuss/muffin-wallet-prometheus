@@ -58,12 +58,12 @@ public class DefaultMuffinWalletRepository implements MuffinWalletRepository {
       return Optional.empty();
     }
 
-    try {
-      Thread.sleep(30000);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new RuntimeException(e);
-    }
+    // try {
+    //   Thread.sleep(30000);
+    // } catch (InterruptedException e) {
+    //   Thread.currentThread().interrupt();
+    //   throw new RuntimeException(e);
+    // }
 
     return Optional.of(foundedWallets.getFirst());
   }

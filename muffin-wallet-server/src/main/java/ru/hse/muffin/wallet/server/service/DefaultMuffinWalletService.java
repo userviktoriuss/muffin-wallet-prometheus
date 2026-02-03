@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import ru.hse.muffin.wallet.server.exception.MuffinWalletNotFoundException;
 import ru.hse.muffin.wallet.server.mapper.MuffinWalletMapper;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DefaultMuffinWalletService implements MuffinWalletService {
 
@@ -37,12 +39,14 @@ public class DefaultMuffinWalletService implements MuffinWalletService {
 
   @Override
   public MuffinWallet getMuffinWallet(UUID id) {
+    log.warn("getMuffinWallet");
     return muffinWalletMapper.dataDtoToMuffinWalletServiceDto(
         muffinWalletRepository.findById(id).orElseThrow(MuffinWalletNotFoundException::new));
   }
 
   @Override
   public Page<MuffinWallet> getMuffinWalletsByOwner(String ownerName, Pageable pageable) {
+    log.info("getMuffinWalletsByOwner");
     if (ownerName != null) {
       return getMuffinWalletsByOwnerNameNotNull(ownerName, pageable);
     }
@@ -52,12 +56,14 @@ public class DefaultMuffinWalletService implements MuffinWalletService {
 
   private Page<MuffinWallet> getMuffinWalletsByOwnerNameNotNull(
       String ownerName, Pageable pageable) {
+    log.info("getMuffinWalletsByOwnerNameNotNull");
     return muffinWalletRepository
         .findByOwnerNameLike(ownerName, pageable)
         .map(muffinWalletMapper::dataDtoToMuffinWalletServiceDto);
   }
 
   private Page<MuffinWallet> getAllMuffinWallets(Pageable pageable) {
+    log.info("getAllMuffinWallets");
     return muffinWalletRepository
         .findAll(pageable)
         .map(muffinWalletMapper::dataDtoToMuffinWalletServiceDto);
@@ -65,6 +71,7 @@ public class DefaultMuffinWalletService implements MuffinWalletService {
 
   @Override
   public MuffinWallet createMuffinWallet(MuffinWallet muffinWallet) {
+    log.info("createMuffinWallet");
     return muffinWalletMapper.dataDtoToMuffinWalletServiceDto(
         muffinWalletRepository.save(
             muffinWalletMapper.serviceDtoToMuffinWalletDataDto(muffinWallet)));
@@ -73,6 +80,7 @@ public class DefaultMuffinWalletService implements MuffinWalletService {
   @Override
   @Transactional
   public MuffinTransaction createMuffinTransaction(MuffinTransaction muffinTransaction) {
+    log.info("createMuffinTransaction");
     muffinWalletRepository.findByIdInForUpdate(
         List.of(
             muffinTransaction.getFromMuffinWalletId(), muffinTransaction.getToMuffinWalletId()));
